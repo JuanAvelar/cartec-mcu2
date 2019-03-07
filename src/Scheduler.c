@@ -13,6 +13,7 @@ scheduler_task_config_t * task_array;
 uint8_t task_array_size = 0;
 
 
+
 void NVIC_init_IRQs(void);
 void LPIT0_init(uint32_t clk_ticks);
 
