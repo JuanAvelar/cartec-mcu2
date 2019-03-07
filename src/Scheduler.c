@@ -17,7 +17,6 @@ void NVIC_init_IRQs(void);
 void LPIT0_init(uint32_t clk_ticks);
 
 
-
 void scheduler_init(scheduler_task_config_t * scheduler_task_array, uint8_t number_of_tasks ,uint32_t step_ticks){
 
 	task_array = scheduler_task_array;
