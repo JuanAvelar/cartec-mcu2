@@ -8,7 +8,7 @@
 #include "FTM.h"
 
 
-static vfcn_callback ftm_callback = 0;
+static vfcn_callback ftm1_callback = 0,ftm2_callback = 0;
 
 /* Initialize FTM Module in Quadrature Decoder Mode */
 void FTM_QD_mode_Init(FTM_QuadDec_config_t config, vfcn_callback callback)
@@ -20,7 +20,10 @@ void FTM_QD_mode_Init(FTM_QuadDec_config_t config, vfcn_callback callback)
 	FTM_Type * FTM_base = config.FTM_config.FTM_instance;
 
 	/* Save callback */
-	ftm_callback = callback;
+	if(FTM_base == FTM1)
+		ftm1_callback = callback;
+	else if(FTM_base == FTM2)
+		ftm2_callback = callback;
 
 	/* Select and enable, clock for FTM */
 	PCC->PCCn[config.FTM_config.ip_index] = PCC_PCCn_PCS(config.FTM_config.FTM_clock_source) //6
@@ -95,8 +98,8 @@ void PWM_set_duty(PWM_channel channel, uint32_t value){
 void FTM1_Ovf_Reload_IRQHandler (void)	//FTM2_IRQHandler
 {
 	FTM1->SC &= ~FTM_SC_TOF_MASK;
-	if (ftm_callback != 0){
-		ftm_callback();
+	if (ftm1_callback != 0){
+		ftm1_callback();
 	}
 }
 
@@ -104,8 +107,8 @@ void FTM1_Ovf_Reload_IRQHandler (void)	//FTM2_IRQHandler
 void FTM2_Ovf_Reload_IRQHandler (void)	//FTM2_IRQHandler
 {
 	FTM2->SC &= ~FTM_SC_TOF_MASK;
-	if (ftm_callback != 0){
-		ftm_callback();
+	if (ftm2_callback != 0){
+		ftm2_callback();
 	}
 }
 
