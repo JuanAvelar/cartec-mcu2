@@ -100,4 +100,13 @@ void FTM1_Ovf_Reload_IRQHandler (void)	//FTM2_IRQHandler
 	}
 }
 
+/* Timer overflow interrupt routine indicating one mechanical revolution */
+void FTM2_Ovf_Reload_IRQHandler (void)	//FTM2_IRQHandler
+{
+	FTM2->SC &= ~FTM_SC_TOF_MASK;
+	if (ftm_callback != 0){
+		ftm_callback();
+	}
+}
+
 

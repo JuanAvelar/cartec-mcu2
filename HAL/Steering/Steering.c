@@ -28,17 +28,17 @@ FTM_QuadDec_config_t steering_encoder = {
 		.mod		= 4096,							/* Ticks per revolution */
 		.quadmode 	= phaseA_phaseB
 };
-
+/*
 FTM_PWM_config_t channel_1_PWM = {
 		.FTM_config.FTM_instance 	 = FTM5,
 		.FTM_config.ip_index 		 = PCC_FTM5_INDEX,
-		.FTM_config.FTM_clock_source = SOSCDIV1,	/* 8 MHz SOSCDIV1_CLK */
+		.FTM_config.FTM_clock_source = SOSCDIV1,	// 8 MHz SOSCDIV1_CLK
 
-		.preescaler = PS_1,			/* (8MHz)/1 = 8MHz */
-		.channels	= 0b100000,		/* Channel 5 */
-		.mod		= 400			/* 20KHz PWM period */
+		.preescaler = PS_1,			// (8MHz)/1 = 8MHz
+		.channels	= 0b100000,		// Channel 5
+		.mod		= 400			// 20KHz PWM period
 };
-
+*/
 FTM_PWM_config_t channel_2_PWM = {
 		.FTM_config.FTM_instance 	 = FTM4,
 		.FTM_config.ip_index 		 = PCC_FTM4_INDEX,
@@ -48,12 +48,12 @@ FTM_PWM_config_t channel_2_PWM = {
 		.channels	= 0b1000000,	/* Channel 6 */
 		.mod		= 400			/* 20KHz PWM period */
 };
-
+/*
 PWM_channel M1_PWM = {
 		.FTM_instance = FTM5,
 		.number	  = 5
 };
-
+*/
 PWM_channel M2_PWM = {
 		.FTM_instance = FTM4,
 		.number	  = 6
@@ -66,7 +66,7 @@ arm_pid_instance_f32 steering_pid = {
 
 };
 
-#define pot_vs_pwmduty_relation  (2000/channel_1_PWM.mod)
+#define pot_vs_pwmduty_relation  (2000/channel_2_PWM.mod)
 
 /* =================================================================================== */
 
@@ -115,8 +115,8 @@ void steering_manual_ctrl(void){
 		set_direction(CW);
 	}
 	else if((2000 < value) && (value < 3000)){
-		GPIO_clearPin(M1_INA);
-		GPIO_clearPin(M1_INB);
+		GPIO_clearPin(M2_INA);
+		GPIO_clearPin(M2_INB);
 	}
 	else if(value >= 3000){
 		pwm_duty = (value - 3000)/pot_vs_pwmduty_relation;

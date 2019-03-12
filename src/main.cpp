@@ -165,7 +165,7 @@ void cruise (void){
 }
 
 void brake (void){
-	brake_dummy(u_signals.braking);
+	brake_set_position(u_signals.braking);
 }
 
 void steering(void){
