@@ -92,7 +92,7 @@ float braking_encoder_read_deg(void){
 	float32_t temp = (float32_t) braking_encoder.FTM_config.FTM_instance->CNT;
 	temp /= (float32_t) braking_encoder.mod;
 	temp += (float32_t) brake_count;
-	return -temp; //(-) sign to keep standard of rotation
+	return (-temp*360); //(-) sign to keep standard of rotation
 }
 
 void braking_manual_ctrl(void){

@@ -178,3 +178,10 @@ void noderos(void){
 	point_to_node->spinOnce();
 
 }
+void hear_i2c_and_update(void){
+	u_signals.steering = (float);
+	u_signals.braking  = (float);
+	u_signals.throttle = (float);
+	u_signals.control_mode = position;
+
+}
