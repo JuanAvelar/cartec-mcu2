@@ -4,8 +4,10 @@
  *  Created on: 19/02/2019
  *      Author: Juan Avelar
  */
-#include "S32K144.h"           /* include peripheral declarations S32K144 */
+#include "S32K148.h"           /* include peripheral declarations S32K144 */
 #include "I2C.h"
+#include "PORT_config.h"
+#include "utilities.h"
 
 #define PTD15 		15 	/* RED LED*/
 #define PTD0 		0   /* BLUE LED*/
@@ -15,10 +17,27 @@
 #define CHANGE_ENDIANNES 		0
 #define True		1
 #define False		0
+#define I2C0_SDA 	2
+#define I2C0_SCL 	3
+#define PULL_UP 	(uint8_t)3
 
 static int slave_byte_count;
 static uint8_t data[16];
-
+//No sirven dentro de esta libreria solo para indicar los valores de los pines.
+//PORT_i2c_init le escribe directo a los registros.
+PORT_config_t config_port_i2c_sda = {
+		.port 	= ePortA,
+		.pin  	= I2C0_SDA,
+		.mux	= eMux3,
+		.dir	= eOutput
+};
+PORT_config_t config_port_i2c_scl = {
+		.port 	= ePortA,
+		.pin  	= I2C0_SCL,
+		.mux	= eMux3,
+		.dir	= eOutput
+};
+/*
 void Rojo(void){
 	PTD->PCOR |= 1<<PTD15;
 }
@@ -28,7 +47,7 @@ void Verde(void){
 void Blue(void){
 	PTD->PCOR |= 1<<PTD0;
 }
-
+*/
 void PDB0_init (void) {
   PCC->PCCn[PCC_PDB0_INDEX] |= PCC_PCCn_CGC_MASK;     /* Enable clock for LPUART1 regs */
   PDB0->IDLY|= 999;
@@ -36,7 +55,7 @@ void PDB0_init (void) {
   PDB0->SC 	|= 0x00007FA1;//Los registros no se actualizen hasta que le escribas un 1 hexadecimal
 }
 
-void delay(int period){//valor no puede ser mayor a 65000
+void delay_PDB(int period){//valor no puede ser mayor a 65000
 	PDB0->IDLY  |= period;
 	PDB0->MOD	|= period+2;//valor máximo del contador
 	PDB0->SC 	|= 0x00000001;//set delay
@@ -66,7 +85,20 @@ void LPI2C0_IRQs_init(void){
     IRQ_init(PDB0_IRQn,10);
 }
 
-void Te_ordeno_que_te_inicies_esclavo0(void){//Este esclavo solo recibe datos por interrupcion
+void PORT_i2c_init(void){
+
+	//I2C PTA2-SDA PTA3-SCL
+	PCC->PCCn[PCC_PORTA_INDEX ]|=PCC_PCCn_CGC_MASK; /* Enable clock for PORTA */
+//quita resistencia pull up interna
+	PORTA->PCR[I2C0_SDA]&=  ~(PULL_UP);           /* Port B6: MUX = ALT2,I2C_SDA */
+	PORTA->PCR[I2C0_SCL]&=	~(PULL_UP);           /* Port B7: MUX = ALT2,I2C_SCL */
+
+	PORTA->PCR[I2C0_SDA]|=PORT_PCR_MUX(3) ;           /* Port B6: MUX = ALT2,I2C_SDA */
+	PORTA->PCR[I2C0_SCL]|=PORT_PCR_MUX(3) ;           /* Port B7: MUX = ALT2,I2C_SCL */
+
+}
+
+void Te_ordeno_que_te_inicies_esclavo0(int direction){//Este esclavo solo recibe datos por interrupcion
 
 	PDB0_init();
 	PCC->PCCn[PCC_LPI2C0_INDEX] &= ~PCC_PCCn_CGC_MASK;    /* Ensure clk disabled for config */
@@ -82,7 +114,7 @@ void Te_ordeno_que_te_inicies_esclavo0(void){//Este esclavo solo recibe datos po
 				   |	LPI2C_SIER_RDIE(1);	//Receive Data 		Interrupt Enable c
 	LPI2C0->SCFGR1 |= 0x00000000;
 	LPI2C0->SCFGR2 |= 0x0000000F;
-	LPI2C0->SAMR   |= LPI2C_SAMR_ADDR0(68);//Direccion I2C esclavo
+	LPI2C0->SAMR   |= LPI2C_SAMR_ADDR0(direction);//Direccion I2C esclavo
 	LPI2C0->SCR    |= LPI2C_SCR_SEN_MASK;//Prender esclavo
 
 	//updated_data->address_written 	= 0;
@@ -90,6 +122,7 @@ void Te_ordeno_que_te_inicies_esclavo0(void){//Este esclavo solo recibe datos po
 
 	slave_byte_count = 0;
 	LPI2C0_IRQs_init();
+	PORT_i2c_init();
 }
 
 
@@ -372,11 +405,13 @@ void LPI2C0_Master_IRQHandler(void) {
     	LPI2C0->MCR |=  (1 << 0);  // Enable master
     }
 }
+
+
 void LPI2C0_Slave_IRQHandler(void){
 	if(LPI2C0->SSR & LPI2C_SSR_AVF_MASK){/*address valid interrupt*/
 		//Verde();
 		uint32_t address = (LPI2C0->SASR);
-		if(address > 16000) Rojo();
+		if(address > 16000) GPIO_setPin(LED_RED);
 		//Verde();
 	}
 	if(LPI2C0->SSR & LPI2C_SSR_RDF_MASK){/*Read interrupt*/
@@ -384,27 +419,27 @@ void LPI2C0_Slave_IRQHandler(void){
 		//if(updated_data->slave_data == 170) Blue();
 		if(slave_byte_count < SLAVE_FLOATS_RECEIVED*BYTESperFLOAT){//checar que no pase de 2
 			data[slave_byte_count] = (uint8_t)(LPI2C0->SRDR & LPI2C_SRDR_DATA_MASK);
-			if(data[slave_byte_count++] == 170) Blue();
-			delay(60000);
+			if(data[slave_byte_count++] == 170) GPIO_setPin(LED_BLUE);
+			delay_PDB(60000);
 
 		}
 		else{uint8_t clear = (uint8_t)(LPI2C0->SRDR & LPI2C_SRDR_DATA_MASK);}//leer el registro resetea el registro
-		Verde();
+		GPIO_setPin(LED_GREEN);
 	}
 	if(LPI2C0->SSR & LPI2C_SSR_BEF_MASK){
 		LPI2C0->SSR |= LPI2C_SSR_BEF_MASK;//clear
-		Rojo();//BIT error flag
+		GPIO_setPin(LED_RED);//BIT error flag
 		LPI2C0->SCR |= (1 << 9);
 	}
 	if(LPI2C0->SSR & LPI2C_SSR_FEF_MASK){
 		LPI2C0->SSR |= LPI2C_SSR_FEF_MASK;//clear flag
-		Rojo();//FIFO error flag
+		GPIO_setPin(LED_RED);//FIFO error flag
 		//Blue();
 		LPI2C0->SCR |= (1 << 9);
 	}
 	if(LPI2C0->SSR & LPI2C_SSR_AM0F_MASK){
 
-		Verde();//address 0 match
+		GPIO_setPin(LED_GREEN);//address 0 match
 	}
 	if(LPI2C0->SSR & LPI2C_SSR_SDF_MASK){//Stop detected
 		LPI2C0->SSR |= LPI2C_SSR_SDF_MASK;//clear

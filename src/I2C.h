@@ -16,6 +16,8 @@ enum status{
 	NO_DATA_RECEIVED
 };
 
+
+
 #define BUSY_TIMEOUT		5000
 #define READING_TIMEOUT		10000
 
@@ -37,7 +39,7 @@ void 	LPI2C0_init_master		(void);
 void 	LPI2C0_IRQs_init		(void);
 void	LPI2C0_Slave_IRQHandler	(void);
 void 	LPI2C0_Master_IRQHandler(void);
-void Te_ordeno_que_te_inicies_esclavo0(void);
+void Te_ordeno_que_te_inicies_esclavo0(int direction);
 //tener en cuenta el tamaño del arreglo de donde se sacar el puntero para no accesar memoria prohibida.
 uint8_t* get_data0	(void);
 uint8_t float_signals_update(float* steer,float* brake,float* acc);

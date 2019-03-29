@@ -12,6 +12,7 @@ extern "C" {
 #include "Steering.h"
 #include "Brake.h"
 #include "CruiseControl.h"
+#include "I2C.h"
 //#include "xbox_controller.h"
 }
 
@@ -108,8 +109,8 @@ int main(void)
 
 	point_to_node = &nh;
 /* End ROS ====================== */
-
-
+#define Direccion_esclavo 55
+	Te_ordeno_que_te_inicies_esclavo0(Direccion_esclavo);
 	obd2_init();
 	steering_init();
 	cruisecontrol_init();
@@ -179,9 +180,10 @@ void noderos(void){
 
 }
 void hear_i2c_and_update(void){
-	u_signals.steering = (float);
-	u_signals.braking  = (float);
-	u_signals.throttle = (float);
+
+	float_signals_update(	&u_signals.steering,
+							&u_signals.braking ,
+							&u_signals.throttle);
 	u_signals.control_mode = position;
 
 }
