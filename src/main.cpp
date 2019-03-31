@@ -94,6 +94,7 @@ int main(void)
 		GPIO_togglePin(LED_BLUE);
 		delay(250);
 	}*/
+
 	GPIO_setPin(LED_BLUE);
 
 /* ROS ==========================
