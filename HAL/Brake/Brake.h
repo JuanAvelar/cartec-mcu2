@@ -20,12 +20,17 @@
 #define MAX_CCW 1300
 #define MOTOR_WHEELS_RELATION 1300/23
 
+#define MAX_CW2  -5000
+#define MAX_CCW2 5000
+#define MOTOR_WHEELS_RELATION2 0.2
+
+
 
 /*First motor used, no longer used*/
 void brake_init(void);
 
 /*Currently used motor*/
-
+void brake_set_position_manual_ctrl(void);
 void brake_set_position(float set_point);
 float braking_encoder_read_rev(void);
 void braking_manual_ctrl(void);

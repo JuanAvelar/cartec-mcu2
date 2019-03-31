@@ -52,9 +52,10 @@ struct u_signals_t u_signals;
 float pos = 0;
 
 
-#define NUMBER_OF_TASKS 4
+#define NUMBER_OF_TASKS 1
 
 scheduler_task_config_t tasks[NUMBER_OF_TASKS] = {
+/*
 		{
 				.task_callback = noderos,
 				.period_ticks  = 0x02,
@@ -65,16 +66,19 @@ scheduler_task_config_t tasks[NUMBER_OF_TASKS] = {
 				.period_ticks  = 2858,		// 2858*3.5us = 10.003ms
 				.start_tick	   = 0x02
 		},
+*/
 		{
 				.task_callback = brake,
 				.period_ticks  = 2858,		// 2858*3.5us = 10.003ms
 				.start_tick	   = 0x04
-		},
+		}/*,
+
 		{
 				.task_callback = cruise,
 				.period_ticks  = 10,		// 28571*3.5us = 99.9985ms ~100ms
 				.start_tick	   = 0x06
 		}
+*/
 };
 
 
@@ -86,13 +90,13 @@ int main(void)
 
 	utilities_init();
 
-	while(GPIO_readPin(SW3) != 1){ // Wait for start button
+	/*while(GPIO_readPin(SW3) != 1){ // Wait for start button
 		GPIO_togglePin(LED_BLUE);
 		delay(250);
-	}
+	}*/
 	GPIO_setPin(LED_BLUE);
 
-/* ROS ========================== */
+/* ROS ==========================
 	ros::NodeHandle nh;
 	ros::Subscriber<std_msgs::Float32MultiArray> sub_pos("/board_connection/control_pos", &ros_callback_ctrl_pos);
 //	ros::Subscriber<std_msgs::Float32MultiArray> sub_vel("/board_connection/control_vel", &ros_callback_ctrl_vel);
@@ -111,7 +115,7 @@ int main(void)
 /* End ROS ====================== */
 #define Direccion_esclavo 55
 	Te_ordeno_que_te_inicies_esclavo0(Direccion_esclavo);
-	obd2_init();
+	//obd2_init();
 	steering_init();
 	cruisecontrol_init();
 	brake_init();
@@ -166,7 +170,9 @@ void cruise (void){
 }
 
 void brake (void){
-	brake_set_position(u_signals.braking);
+	//brake_set_position(u_signals.braking);
+	//braking_manual_ctrl();
+	brake_set_position_manual_ctrl();
 }
 
 void steering(void){

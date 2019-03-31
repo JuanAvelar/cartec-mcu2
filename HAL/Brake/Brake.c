@@ -9,6 +9,7 @@
 
 #include "Brake.h"
 
+float check_setpoint;
 FTM_QuadDec_config_t braking_encoder = {
 		/* Encoder channel A */
 		.port[0].port	= ePortA,
@@ -60,9 +61,9 @@ PWM_channel M2_PWM = {
 };
 */
 arm_pid_instance_f32 braking_pid = {
-	.Kp = 0.01, 	//0.125
-	.Ki = 0.0522, 	//0.0522,
-	.Kd = 0.00654 	//0.00654,
+	.Kp = 0.825, 	//0.125
+	.Ki = 0.0722, 	//0.0522,
+	.Kd = 0.0008654 	//0.00654,
 
 };
 
@@ -97,6 +98,7 @@ float braking_encoder_read_deg(void){
 
 void braking_manual_ctrl(void){
 	uint16_t value = utility_potentiometer_position();
+
 	uint16_t pwm_duty = 0;
 
 	if(value <= 2000){
@@ -112,6 +114,42 @@ void braking_manual_ctrl(void){
 		set_direction_brake(CCW);
 	}
 	PWM_set_duty(M1_PWM, pwm_duty);
+}
+
+void brake_set_position_manual_ctrl(void){
+
+	float set_point = (float)utility_potentiometer_position() - 2500;
+	check_setpoint = set_point;
+	float err;
+	float out;
+
+	set_point = set_point * MOTOR_WHEELS_RELATION2;
+
+	brake_limit(&set_point);
+
+	err = set_point - braking_encoder_read_deg();
+
+	if( ((-PID_RESET_THRESHOLD < err) && (err < PID_RESET_THRESHOLD)) && ~brake_pid_reset_flag ){
+		arm_pid_reset_f32(&braking_pid);
+		brake_pid_reset_flag = 0xFF;
+	}
+	else if( ((err < -PID_RESET_THRESHOLD) || (PID_RESET_THRESHOLD < err)) && brake_pid_reset_flag ){
+		brake_pid_reset_flag = 0x00;
+	}
+
+	out = arm_pid_f32(&braking_pid, err);
+
+	if(out < 0){
+		set_direction_brake(CW);
+		out *= -1;
+	}
+	else{
+		set_direction_brake(CCW);
+	}
+	if(out > 400)
+		out = 400;
+
+	PWM_set_duty(M1_PWM, out);
 }
 
 void brake_set_position(float set_point){
@@ -177,10 +215,10 @@ void set_direction_brake(brake_direction dir){
 }
 
 void brake_limit (float *angle){
-	if (*angle > MAX_CCW){
-		*angle = MAX_CCW;
+	if (*angle > MAX_CCW2){
+		*angle = MAX_CCW2;
 	}
-	else if (*angle < MAX_CW) {
-		*angle = MAX_CW;
+	else if (*angle < MAX_CW2) {
+		*angle = MAX_CW2;
 	}
 }
