@@ -68,7 +68,6 @@ scheduler_task_config_t tasks[NUMBER_OF_TASKS] = {
 				.period_ticks  = 2858,		// 2858*3.5us = 10.003ms
 				.start_tick	   = 0x06
 		},
-
 		{
 				.task_callback = brake,
 				.period_ticks  = 2858,		// 2858*3.5us = 10.003ms
