@@ -21,8 +21,6 @@ extern PORT_config_t SW4;
 void utilities_init(void);
 uint32_t utility_potentiometer_position(void);
 
-
-
 #ifdef BENCH_TOOLS		/* Miscellany functions for bench testing */
 
 void delay(float ms);	/* Polling delay, maximum 1000ms */

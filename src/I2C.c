@@ -6,7 +6,6 @@
  */
 #include "S32K148.h"           /* include peripheral declarations S32K144 */
 #include "I2C.h"
-#include "PORT_config.h"
 #include "utilities.h"
 
 #define PTD15 		15 	/* RED LED*/
@@ -14,7 +13,7 @@
 #define PTD16		16	/* GREEN LED*/
 #define SLAVE_FLOATS_RECEIVED 	3
 #define BYTESperFLOAT 			4
-#define CHANGE_ENDIANNES 		0
+#define CHANGE_ENDIANNES 		1
 #define True		1
 #define False		0
 #define I2C0_SDA 	2
@@ -23,20 +22,6 @@
 
 static int slave_byte_count;
 static uint8_t data[16];
-//No sirven dentro de esta libreria solo para indicar los valores de los pines.
-//PORT_i2c_init le escribe directo a los registros.
-PORT_config_t config_port_i2c_sda = {
-		.port 	= ePortA,
-		.pin  	= I2C0_SDA,
-		.mux	= eMux3,
-		.dir	= eOutput
-};
-PORT_config_t config_port_i2c_scl = {
-		.port 	= ePortA,
-		.pin  	= I2C0_SCL,
-		.mux	= eMux3,
-		.dir	= eOutput
-};
 /*
 void Rojo(void){
 	PTD->PCOR |= 1<<PTD15;
@@ -55,7 +40,7 @@ void PDB0_init (void) {
   PDB0->SC 	|= 0x00007FA1;//Los registros no se actualizen hasta que le escribas un 1 hexadecimal
 }
 
-void delay_PDB(int period){//valor no puede ser mayor a 65000
+void delayPDB(int period){//valor no puede ser mayor a 65000
 	PDB0->IDLY  |= period;
 	PDB0->MOD	|= period+2;//valor máximo del contador
 	PDB0->SC 	|= 0x00000001;//set delay
@@ -63,7 +48,7 @@ void delay_PDB(int period){//valor no puede ser mayor a 65000
 }
 
 void PDB0_IRQHandler(void){
-	PTD->PSOR |= 1 << PTD0;
+	GPIO_clearPin(LED_BLUE);
 	PDB0->SC &= ~(1<<6);//clear flag
 }
 
@@ -85,11 +70,10 @@ void LPI2C0_IRQs_init(void){
     IRQ_init(PDB0_IRQn,10);
 }
 
-void PORT_i2c_init(void){
-
+void PORT_init_i2c(void){
 	//I2C PTA2-SDA PTA3-SCL
-	PCC->PCCn[PCC_PORTA_INDEX ]|=PCC_PCCn_CGC_MASK; /* Enable clock for PORTA */
-//quita resistencia pull up interna
+	PCC->PCCn[PCC_PORTA_INDEX ]|=PCC_PCCn_CGC_MASK; /* Enable clock for PORTB */
+
 	PORTA->PCR[I2C0_SDA]&=  ~(PULL_UP);           /* Port B6: MUX = ALT2,I2C_SDA */
 	PORTA->PCR[I2C0_SCL]&=	~(PULL_UP);           /* Port B7: MUX = ALT2,I2C_SCL */
 
@@ -119,10 +103,9 @@ void Te_ordeno_que_te_inicies_esclavo0(int direction){//Este esclavo solo recibe
 
 	//updated_data->address_written 	= 0;
 	//updated_data->slave_data 		= 0;
-
+	PORT_init_i2c();
 	slave_byte_count = 0;
 	LPI2C0_IRQs_init();
-	PORT_i2c_init();
 }
 
 
@@ -405,8 +388,6 @@ void LPI2C0_Master_IRQHandler(void) {
     	LPI2C0->MCR |=  (1 << 0);  // Enable master
     }
 }
-
-
 void LPI2C0_Slave_IRQHandler(void){
 	if(LPI2C0->SSR & LPI2C_SSR_AVF_MASK){/*address valid interrupt*/
 		//Verde();
@@ -417,10 +398,11 @@ void LPI2C0_Slave_IRQHandler(void){
 	if(LPI2C0->SSR & LPI2C_SSR_RDF_MASK){/*Read interrupt*/
 		//updated_data->slave_data = (uint8_t)(LPI2C0->SRDR & LPI2C_SRDR_DATA_MASK);
 		//if(updated_data->slave_data == 170) Blue();
-		if(slave_byte_count < SLAVE_FLOATS_RECEIVED*BYTESperFLOAT){//checar que no pase de 2
+		//+2 because first byte is address and the second the number of bytes that will be written
+		if(slave_byte_count < SLAVE_FLOATS_RECEIVED*BYTESperFLOAT+2){//checar que no pase de 2
 			data[slave_byte_count] = (uint8_t)(LPI2C0->SRDR & LPI2C_SRDR_DATA_MASK);
 			if(data[slave_byte_count++] == 170) GPIO_setPin(LED_BLUE);
-			delay_PDB(60000);
+			delayPDB(60000);
 
 		}
 		else{uint8_t clear = (uint8_t)(LPI2C0->SRDR & LPI2C_SRDR_DATA_MASK);}//leer el registro resetea el registro
@@ -469,11 +451,12 @@ uint8_t float_signals_update(float* steer,float* brake,float* acc){
 			unsigned char byte;
 		}u;
 		int i;
+		//byte 0 is always zero
 		for(i=0;i<SLAVE_FLOATS_RECEIVED;i++){
 #if CHANGE_ENDIANNES
-			u.ul = (data[3+i] << 24) | (data[2+i] << 16) | (data[1+i] << 8) | data[0+i];
+			u.ul = (data[5+BYTESperFLOAT*i] << 24) | (data[4+BYTESperFLOAT*i] << 16) | (data[3+BYTESperFLOAT*i] << 8) | data[2+BYTESperFLOAT*i];
 #else
-			u.ul = (data[0+i] << 24) | (data[1+i] << 16) | (data[2+i] << 8) | data[3+i];
+			u.ul = (data[2+BYTESperFLOAT*i] << 24) | (data[3+BYTESperFLOAT*i] << 16) | (data[4+BYTESperFLOAT*i] << 8) | data[5+BYTESperFLOAT*i];
 #endif
 			u_signals[i] = u.f;
 		}

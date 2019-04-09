@@ -27,6 +27,7 @@ void cruise(void);
 void brake (void);
 void steering(void);
 void noderos(void);
+void hear_i2c_and_update(void);
 
 ros::NodeHandle* point_to_node;
 ros::Publisher pub("", 0);
@@ -52,7 +53,7 @@ struct u_signals_t u_signals;
 float pos = 0;
 
 
-#define NUMBER_OF_TASKS 1
+#define NUMBER_OF_TASKS 4
 
 scheduler_task_config_t tasks[NUMBER_OF_TASKS] = {
 /*
@@ -61,24 +62,29 @@ scheduler_task_config_t tasks[NUMBER_OF_TASKS] = {
 				.period_ticks  = 0x02,
 				.start_tick	   = 0x01
 		},
+*/
 		{
 				.task_callback = steering,
 				.period_ticks  = 2858,		// 2858*3.5us = 10.003ms
-				.start_tick	   = 0x02
+				.start_tick	   = 0x06
 		},
-*/
+
 		{
 				.task_callback = brake,
 				.period_ticks  = 2858,		// 2858*3.5us = 10.003ms
 				.start_tick	   = 0x04
-		}/*,
-
+		},
+		{
+				.task_callback = hear_i2c_and_update,
+				.period_ticks  = 2858,		// 2858*3.5us = 10.003ms
+				.start_tick	   = 0x02
+		},
 		{
 				.task_callback = cruise,
-				.period_ticks  = 10,		// 28571*3.5us = 99.9985ms ~100ms
-				.start_tick	   = 0x06
+				.period_ticks  = 2858,		// 28571*3.5us = 99.9985ms ~100ms
+				.start_tick	   = 0x08
 		}
-*/
+
 };
 
 
@@ -113,8 +119,8 @@ int main(void)
 //	nh.subscribe(sub_vel);
 
 	point_to_node = &nh;
-/* End ROS ====================== */
-#define Direccion_esclavo 55
+// End ROS ====================== */
+#define Direccion_esclavo 68
 	Te_ordeno_que_te_inicies_esclavo0(Direccion_esclavo);
 	//obd2_init();
 	steering_init();
@@ -171,9 +177,9 @@ void cruise (void){
 }
 
 void brake (void){
-	//brake_set_position(u_signals.braking);
+	brake_set_position(u_signals.braking);
 	//braking_manual_ctrl();
-	brake_set_position_manual_ctrl();
+	//brake_set_position_manual_ctrl();
 }
 
 void steering(void){
@@ -188,9 +194,10 @@ void noderos(void){
 }
 void hear_i2c_and_update(void){
 
-	float_signals_update(	&u_signals.steering,
-							&u_signals.braking ,
-							&u_signals.throttle);
+		float_signals_update(	&u_signals.steering,
+								&u_signals.braking,
+								&u_signals.throttle );
+
 	u_signals.control_mode = position;
 
 }
