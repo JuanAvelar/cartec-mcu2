@@ -61,9 +61,9 @@ PWM_channel M2_PWM = {
 };
 */
 arm_pid_instance_f32 braking_pid = {
-	.Kp = 0.825, 	//0.125
+	.Kp = 0.225, 	//0.125
 	.Ki = 0.0722, 	//0.0522,
-	.Kd = 0.0008654 	//0.00654,
+	.Kd = 0.008654 	//0.00654,
 
 };
 
@@ -156,7 +156,7 @@ void brake_set_position(float set_point){
 	float err;
 	float out;
 
-	set_point = set_point * MOTOR_WHEELS_RELATION;
+	set_point = set_point * MOTOR_WHEELS_RELATION2;
 
 	brake_limit(&set_point);
 

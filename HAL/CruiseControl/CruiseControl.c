@@ -105,7 +105,7 @@ void cruisecontrol_set_position(uint8_t tps, uint8_t set_point){
 }
 
 void cruisecontrol_handler(uint8_t set_point){
-	if(obd2_readable() == 1){
+	if(obd2_readable() == 1){//TPS = throttle position sensor
 		obd2_read_PID(PID_TPS, &tps_value);
 		obd2_request_PID(PID_TPS);
 	}

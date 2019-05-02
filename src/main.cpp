@@ -53,7 +53,7 @@ struct u_signals_t u_signals;
 float pos = 0;
 
 
-#define NUMBER_OF_TASKS 4
+#define NUMBER_OF_TASKS 3
 
 scheduler_task_config_t tasks[NUMBER_OF_TASKS] = {
 /*
@@ -78,11 +78,11 @@ scheduler_task_config_t tasks[NUMBER_OF_TASKS] = {
 				.period_ticks  = 2858,		// 2858*3.5us = 10.003ms
 				.start_tick	   = 0x02
 		},
-		{
+		/*{
 				.task_callback = cruise,
 				.period_ticks  = 2858,		// 28571*3.5us = 99.9985ms ~100ms
 				.start_tick	   = 0x08
-		}
+		}*/
 
 };
 
@@ -150,7 +150,7 @@ int main(void)
 void ros_callback_ctrl_pos(const std_msgs::Float32MultiArray &msg) {
 	u_signals.control_mode = position;
 	u_signals.steering = msg.data[0];
-	u_signals.braking = msg.data[1];
+	u_signals.braking  = msg.data[1];
 	u_signals.throttle = msg.data[2];
 
 	std_msgs::Int8 to_send;
@@ -162,7 +162,7 @@ void ros_callback_ctrl_pos(const std_msgs::Float32MultiArray &msg) {
 void ros_callback_ctrl_vel(const std_msgs::Float32MultiArray &msg) {
 	u_signals.control_mode = velocity;
 	u_signals.vel_steering = msg.data[0];
-	u_signals.vel_braking = msg.data[1];
+	u_signals.vel_braking  = msg.data[1];
 	u_signals.vel_throttle = msg.data[2];
 
 	std_msgs::Int8 to_send;
@@ -193,9 +193,9 @@ void noderos(void){
 }
 void hear_i2c_and_update(void){
 
-		float_signals_update(	&u_signals.steering,
+		float_signals_update(	&u_signals.throttle,
 								&u_signals.braking,
-								&u_signals.throttle );
+								&u_signals.steering );
 
 	u_signals.control_mode = position;
 

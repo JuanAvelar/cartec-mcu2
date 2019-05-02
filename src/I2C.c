@@ -77,8 +77,8 @@ void PORT_init_i2c(void){
 	PORTA->PCR[I2C0_SDA]&=  ~(PULL_UP);           /* Port B6: MUX = ALT2,I2C_SDA */
 	PORTA->PCR[I2C0_SCL]&=	~(PULL_UP);           /* Port B7: MUX = ALT2,I2C_SCL */
 
-	PORTA->PCR[I2C0_SDA]|=PORT_PCR_MUX(3) ;           /* Port B6: MUX = ALT2,I2C_SDA */
-	PORTA->PCR[I2C0_SCL]|=PORT_PCR_MUX(3) ;           /* Port B7: MUX = ALT2,I2C_SCL */
+	PORTA->PCR[I2C0_SDA]|=PORT_PCR_MUX(3) | PULL_UP ;           /* Port B6: MUX = ALT2,I2C_SDA */
+	PORTA->PCR[I2C0_SCL]|=PORT_PCR_MUX(3) | PULL_UP ;           /* Port B7: MUX = ALT2,I2C_SCL */
 
 }
 
