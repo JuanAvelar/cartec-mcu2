@@ -20,6 +20,7 @@ extern PORT_config_t SW4;
 
 void utilities_init(void);
 uint32_t utility_potentiometer_position(void);
+uint32_t utility_external_read_ptc15_TPS(void);
 
 #ifdef BENCH_TOOLS		/* Miscellany functions for bench testing */
 

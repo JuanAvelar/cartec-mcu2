@@ -116,6 +116,13 @@ void cruisecontrol_handler(uint8_t set_point){
 	cruisecontrol_set_position(tps_value, set_point);
 }
 
+void cruisecontrol_handler_with_ADC(uint8_t set_point){
+	//Be careful not to measure values below 0V or above 5V
+	tps_value = (float)utility_external_read_ptc15_TPS();//The read value in milivolts from the tps
+	//change this function to involve a PID controller
+	cruisecontrol_set_position(tps_value, set_point);
+}
+
 /* ========================================================================================= */
 
 void set_throttle_action(throttle_dir dir){
