@@ -33,9 +33,15 @@ void utilities_init(void){
 	GPIO_clearPin(LED_GREEN);
 	GPIO_clearPin(LED_BLUE);
 }
-
+//Reads pin from potenciometer
 uint32_t utility_potentiometer_position(void){
 	convertAdcChan(0b101100);		/* Convert Channel AD28 to pot on EVB */
+	while(adc_complete()==0){}      /* Wait for conversion complete flag */
+	return read_adc_chx();			/* Get channel's conversion results in mv (0-5000) */
+}
+
+uint32_t utility_external_read_ptc15_TPS(void){
+	convertAdcChan(0b001101);		/* Convert Channel AD28 to pot on EVB */
 	while(adc_complete()==0){}      /* Wait for conversion complete flag */
 	return read_adc_chx();			/* Get channel's conversion results in mv (0-5000) */
 }

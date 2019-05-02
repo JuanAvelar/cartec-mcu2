@@ -6,6 +6,7 @@
 #include "ADC.h"
 
 void ADC_init(void)  {
+//No need for pin declaration because ADC option is muxed by default if available
 
   PCC->PCCn[PCC_ADC0_INDEX] &=~ PCC_PCCn_CGC_MASK;  /* Disable clock to change PCS */
   PCC->PCCn[PCC_ADC0_INDEX] |= PCC_PCCn_PCS(1);     /* PCS=1: Select SOSCDIV2 */
