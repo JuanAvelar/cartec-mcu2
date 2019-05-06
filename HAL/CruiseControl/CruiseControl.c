@@ -6,6 +6,8 @@
  */
 
 #include "CruiseControl.h"
+#include "arm_math.h"
+#include "utilities.h"
 
 PORT_config_t ENA = { .port = ePortC, .pin = 29, .mux = eMux2,      .dir = eOutput };
 PORT_config_t IN1 = { .port = ePortC, .pin = 30, .mux = eMuxAsGPIO, .dir = eOutput };
@@ -33,7 +35,17 @@ typedef enum{
 uint8_t obd_flag = 0;
 float tps_value = 0;
 
+arm_pid_instance_f32 throttle_pid = {
+	.Kp = 4, 	//0.125
+	.Ki = 0.722, 	//0.0522,
+	.Kd = 0.2654 	//0.00654,
+
+};
+
+uint8_t throttle_pid_reset_flag = 0x00;
+
 void set_throttle_action(throttle_dir dir);
+void cruisecontrol_limit (float *angle);
 
 void cruisecontrol_init(void){
 //	ADC_init();	//12bit resolution
@@ -42,6 +54,7 @@ void cruisecontrol_init(void){
 	GPIO_pinInit(IN4);
 	PORT_init(ENA);
 	FTM_PWM_mode_Init(ENA_PWM_config);
+	arm_pid_init_f32(&throttle_pid, 1);
 }
 
 
@@ -104,6 +117,84 @@ void cruisecontrol_set_position(uint8_t tps, uint8_t set_point){
 
 }
 
+void cruisecontrol_set_position_forTPS_ADC(float tps, float set_point){
+	float err;
+	float out;
+	//TPS limits are 0.79V and 3.88V
+	//We must expand it to go from 0 to 100 to express it as percentage
+	tps = (tps - 0.79)/(3.9-0.79)*100;
+
+	cruisecontrol_limit(&set_point);
+
+	err = set_point - tps;
+//accounting on Actuator saturation
+	if( ((-PID_RESET_THRESHOLD_THROTTLE < err) && (err < PID_RESET_THRESHOLD_THROTTLE)) && ~throttle_pid_reset_flag ){
+		arm_pid_reset_f32(&throttle_pid);
+		throttle_pid_reset_flag = 0xFF;
+	}
+	else if( ((err < -PID_RESET_THRESHOLD_THROTTLE) || (PID_RESET_THRESHOLD_THROTTLE < err)) && throttle_pid_reset_flag ){
+		throttle_pid_reset_flag = 0x00;
+	}
+
+	out = arm_pid_f32(&throttle_pid, err);
+
+	if(out < 0){
+		set_throttle_action(speed_down);
+		out *= -1;
+	}
+	else{
+		set_throttle_action(speed_up);
+	}
+	if(out > 400)
+		out = 400;
+	if(set_point == 0){
+		set_throttle_action(halt);
+	}
+	PWM_set_duty(ENA_PWM, out);
+}
+
+void cruisecontrol_set_pot_manual_ctrl(float tps){
+	float err;
+	float out;
+	float set_point = (float)utility_potentiometer_position();
+	//scale from 5000 to 100
+	set_point = set_point*0.02;
+	//TPS limits are 0.79V and 3.88V
+	//We must expand it to go from 0 to 100 to express it as percentage
+//set-point is good if managed from 5% to 15%
+	tps = (tps - 0.79)/(3.9-0.79)*100;
+
+	cruisecontrol_limit(&set_point);
+
+	err = set_point - tps;
+//accounting on Actuator saturation
+	if( ((-PID_RESET_THRESHOLD_THROTTLE < err) && (err < PID_RESET_THRESHOLD_THROTTLE)) && ~throttle_pid_reset_flag ){
+		arm_pid_reset_f32(&throttle_pid);
+		throttle_pid_reset_flag = 0xFF;
+	}
+	else if( ((err < -PID_RESET_THRESHOLD_THROTTLE) || (PID_RESET_THRESHOLD_THROTTLE < err)) && throttle_pid_reset_flag ){
+		throttle_pid_reset_flag = 0x00;
+	}
+
+	out = arm_pid_f32(&throttle_pid, err);
+
+	if(out < 0){
+		set_throttle_action(speed_down);
+		out *= -1;
+	}
+	else{
+		set_throttle_action(speed_up);
+	}
+	//acceleration absolute PWM limit 300/400
+	if(out > 300)
+		out = 300;
+	if(set_point == 0){
+		set_throttle_action(halt);
+	}
+
+	PWM_set_duty(ENA_PWM, out);
+}
+
 void cruisecontrol_handler(uint8_t set_point){
 	if(obd2_readable() == 1){//TPS = throttle position sensor
 		obd2_read_PID(PID_TPS, &tps_value);
@@ -115,12 +206,20 @@ void cruisecontrol_handler(uint8_t set_point){
 	}
 	cruisecontrol_set_position(tps_value, set_point);
 }
-
-void cruisecontrol_handler_with_ADC(uint8_t set_point){
+//----------------Main
+void cruisecontrol_handler_with_ADC(float set_point, uint8_t state_machine){
 	//Be careful not to measure values below 0V or above 5V
 	tps_value = (float)utility_external_read_ptc15_TPS();//The read value in milivolts from the tps
+	tps_value = tps_value*0.001;
 	//change this function to involve a PID controller
-	cruisecontrol_set_position(tps_value, set_point);
+	//limit values 3.9V high - 0.78V low
+
+	if (state_machine == Jetson_connected){
+		cruisecontrol_set_position_forTPS_ADC(tps_value, set_point);
+	}
+	if (state_machine == throttle_pot_PID_ctrl){
+		cruisecontrol_set_pot_manual_ctrl(tps_value);
+	}
 }
 
 /* ========================================================================================= */
@@ -138,5 +237,14 @@ void set_throttle_action(throttle_dir dir){
 	else if(dir == halt){
 		GPIO_clearPin(IN1);
 		GPIO_clearPin(IN2);
+	}
+}
+
+void cruisecontrol_limit (float *angle){
+	if (*angle > MAX_setpoint){
+		*angle = MAX_setpoint;
+	}
+	else if (*angle < MIN_setpoint) {
+		*angle = MIN_setpoint;
 	}
 }

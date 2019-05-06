@@ -158,6 +158,15 @@ void steering_set_position(float set_point){
 	PWM_set_duty(M2_PWM, out);
 }
 
+void steering_handler(float set_point, uint8_t state_machine){
+	if (state_machine == Jetson_connected){
+		steering_set_position(set_point);
+	}
+	if (state_machine == steering_pot_PID_ctrl){
+		steering_manual_ctrl();
+	}
+}
+
 
 
 /* =================================================================================== */

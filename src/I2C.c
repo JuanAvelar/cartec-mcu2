@@ -34,7 +34,7 @@ void Blue(void){
 }
 */
 void PDB0_init (void) {
-  PCC->PCCn[PCC_PDB0_INDEX] |= PCC_PCCn_CGC_MASK;     /* Enable clock for LPUART1 regs */
+  PCC->PCCn[PCC_PDB0_INDEX] |= PCC_PCCn_CGC_MASK;     /* Enable clock for PDB0 regs */
   PDB0->IDLY|= 999;
   PDB0->MOD	|= 1000;//valor máximo del contador
   PDB0->SC 	|= 0x00007FA1;//Los registros no se actualizen hasta que le escribas un 1 hexadecimal

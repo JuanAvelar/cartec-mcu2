@@ -37,6 +37,7 @@ float steering_wheels_angle(void);
 void steering_manual_ctrl(void);
 void steering_set_position(float set_point);
 void set_direction(steer_direction dir);
+void steering_handler(float set_point, uint8_t state_machine);
 
 
 #endif /* STEERING_STEERING_H_ */

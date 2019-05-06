@@ -28,6 +28,7 @@ void brake (void);
 void steering(void);
 void noderos(void);
 void hear_i2c_and_update(void);
+void check_states(void);
 
 ros::NodeHandle* point_to_node;
 ros::Publisher pub("", 0);
@@ -50,10 +51,13 @@ struct u_signals_t {
 
 struct u_signals_t u_signals;
 
+uint8_t state = Jetson_connected;
+
+
 float pos = 0;
 
 
-#define NUMBER_OF_TASKS 3
+#define NUMBER_OF_TASKS 5
 
 scheduler_task_config_t tasks[NUMBER_OF_TASKS] = {
 /*
@@ -78,11 +82,16 @@ scheduler_task_config_t tasks[NUMBER_OF_TASKS] = {
 				.period_ticks  = 2858,		// 2858*3.5us = 10.003ms
 				.start_tick	   = 0x02
 		},
-		/*{
+		{
 				.task_callback = cruise,
 				.period_ticks  = 2858,		// 28571*3.5us = 99.9985ms ~100ms
 				.start_tick	   = 0x08
-		}*/
+		},
+		{
+				.task_callback = check_states,
+				.period_ticks  = 2858,		// 28571*3.5us = 99.9985ms ~100ms
+				.start_tick	   = 0x10
+		}
 
 };
 
@@ -139,7 +148,6 @@ int main(void)
 	GPIO_clearPin(LED_BLUE);
 
 	for(;;){
-
 	}
 
 	return 0;
@@ -173,19 +181,19 @@ void ros_callback_ctrl_vel(const std_msgs::Float32MultiArray &msg) {
 void cruise (void){
 	//cruisecontrol_handler(u_signals.throttle);
 //	cruisecontrol_dummy_2(u_signals.throttle);
-	cruisecontrol_handler_with_ADC(u_signals.throttle);
+	cruisecontrol_handler_with_ADC(u_signals.throttle, state);
 }
 
 void brake (void){
-	brake_set_position(u_signals.braking);
+	brake_handler(u_signals.braking, state);
 	//braking_manual_ctrl();
 	//brake_set_position_manual_ctrl();
 }
 
 void steering(void){
-	steering_set_position(u_signals.steering);
+//	steering_set_position(u_signals.steering);
 //	pos = steering_encoder_read_deg();
-
+	steering_handler(u_signals.steering, state);
 }
 
 void noderos(void){
@@ -200,4 +208,37 @@ void hear_i2c_and_update(void){
 
 	u_signals.control_mode = position;
 
+}
+/*State machine*/
+void check_states(void){
+	if(!check_delay_flag()){
+		if(GPIO_readPin(SW3) && (state == Jetson_connected || state == steering_pot_PID_ctrl)){
+			GPIO_clearPin(LED_RED);
+			GPIO_clearPin(LED_GREEN);
+			GPIO_setPin(LED_BLUE);
+			state = throttle_pot_PID_ctrl;
+			delayPDB1(0.5, state);//4 seconds is the maximum possible delay
+
+		}
+		else if(GPIO_readPin(SW3) && state == throttle_pot_PID_ctrl){
+			GPIO_clearPin(LED_BLUE);
+			GPIO_setPin(LED_GREEN);
+			GPIO_clearPin(LED_RED);
+			state = brake_pot_PID_ctrl;
+			delayPDB1(0.5, state);
+		}
+		else if(GPIO_readPin(SW3) && state == brake_pot_PID_ctrl){
+			GPIO_setPin(LED_RED);
+			GPIO_clearPin(LED_GREEN);
+			GPIO_clearPin(LED_BLUE);
+			state = steering_pot_PID_ctrl;
+			delayPDB1(0.5, state);
+		}
+	}
+	if(GPIO_readPin(SW4) && state != Jetson_connected){
+		GPIO_clearPin(LED_BLUE);
+		GPIO_clearPin(LED_GREEN);
+		GPIO_clearPin(LED_RED);
+		state = Jetson_connected;
+	}
 }

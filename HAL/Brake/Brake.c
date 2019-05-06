@@ -118,22 +118,24 @@ void braking_manual_ctrl(void){
 
 void brake_set_position_manual_ctrl(void){
 
-	float set_point = (float)utility_potentiometer_position() - 2500;
+	float set_point = (float)utility_potentiometer_position();
 	check_setpoint = set_point;
 	float err;
 	float out;
-
+	//Change max point from 5000 to 100
+	set_point = set_point*0.02;
+	//At this point set_point should be a number from 0 to 100
 	set_point = set_point * MOTOR_WHEELS_RELATION2;
-
+	//At this point set_point should be a value from 0 to 360
 	brake_limit(&set_point);
 
 	err = set_point - braking_encoder_read_deg();
 
-	if( ((-PID_RESET_THRESHOLD < err) && (err < PID_RESET_THRESHOLD)) && ~brake_pid_reset_flag ){
+	if( ((-PID_RESET_THRESHOLD_BRK < err) && (err < PID_RESET_THRESHOLD_BRK)) && ~brake_pid_reset_flag ){
 		arm_pid_reset_f32(&braking_pid);
 		brake_pid_reset_flag = 0xFF;
 	}
-	else if( ((err < -PID_RESET_THRESHOLD) || (PID_RESET_THRESHOLD < err)) && brake_pid_reset_flag ){
+	else if( ((err < -PID_RESET_THRESHOLD_BRK) || (PID_RESET_THRESHOLD_BRK < err)) && brake_pid_reset_flag ){
 		brake_pid_reset_flag = 0x00;
 	}
 
@@ -162,11 +164,11 @@ void brake_set_position(float set_point){
 
 	err = set_point - braking_encoder_read_deg();
 
-	if( ((-PID_RESET_THRESHOLD < err) && (err < PID_RESET_THRESHOLD)) && ~brake_pid_reset_flag ){
+	if( ((-PID_RESET_THRESHOLD_BRK < err) && (err < PID_RESET_THRESHOLD_BRK)) && ~brake_pid_reset_flag ){
 		arm_pid_reset_f32(&braking_pid);
 		brake_pid_reset_flag = 0xFF;
 	}
-	else if( ((err < -PID_RESET_THRESHOLD) || (PID_RESET_THRESHOLD < err)) && brake_pid_reset_flag ){
+	else if( ((err < -PID_RESET_THRESHOLD_BRK) || (PID_RESET_THRESHOLD_BRK < err)) && brake_pid_reset_flag ){
 		brake_pid_reset_flag = 0x00;
 	}
 
@@ -211,6 +213,15 @@ void set_direction_brake(brake_direction dir){
 	}
 	else if (dir == Coast){
 		GPIO_clearPin(M1_EN);
+	}
+}
+
+void brake_handler(float set_point, uint8_t state_machine){
+	if (state_machine == Jetson_connected){
+		brake_set_position(set_point);
+	}
+	if (state_machine == brake_pot_PID_ctrl){
+		brake_set_position_manual_ctrl();
 	}
 }
 

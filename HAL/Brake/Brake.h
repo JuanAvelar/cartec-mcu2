@@ -14,7 +14,7 @@
 #include "ADC.h"
 #include "arm_math.h"
 
-#define PID_RESET_THRESHOLD 6
+#define PID_RESET_THRESHOLD_BRK 2
 #define PID_SAMPLING_MS 10
 #define MAX_CW  -1300
 #define MAX_CCW 1300
@@ -34,6 +34,7 @@ void brake_set_position_manual_ctrl(void);
 void brake_set_position(float set_point);
 float braking_encoder_read_rev(void);
 void braking_manual_ctrl(void);
+void brake_handler(float set_point, uint8_t state_machine);
 
 
 #endif /* BRAKE_BRAKE_H_ */
