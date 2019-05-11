@@ -129,7 +129,13 @@ int main(void)
 	point_to_node = &nh;
 // End ROS ====================== */
 #define Direccion_esclavo 68
-	Te_ordeno_que_te_inicies_esclavo0(Direccion_esclavo);
+	/*Si se utiliza la alimentación de 12V no
+	 * se puede utilizar el modulo de LPI2C0
+	 * ya que tiene pines compartidos
+	 * fijos con otro componente
+	 */
+	Te_ordeno_que_te_inicies_esclavo1(Direccion_esclavo);
+	//Te_ordeno_que_te_inicies_esclavo0(Direccion_esclavo);
 	//obd2_init();
 	steering_init();
 	cruisecontrol_init();
@@ -198,16 +204,12 @@ void steering(void){
 
 void noderos(void){
 	point_to_node->spinOnce();
-
 }
 void hear_i2c_and_update(void){
-
-		float_signals_update(	&u_signals.throttle,
-								&u_signals.braking,
-								&u_signals.steering );
-
+	float_signals_update(	&u_signals.throttle,
+							&u_signals.braking,
+							&u_signals.steering );
 	u_signals.control_mode = position;
-
 }
 /*State machine*/
 void check_states(void){

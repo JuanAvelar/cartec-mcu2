@@ -18,10 +18,14 @@
 #define False		0
 #define I2C0_SDA 	2
 #define I2C0_SCL 	3
+#define I2C1_SDA 	0
+#define I2C1_SCL 	1
+
 #define PULL_UP 	(uint8_t)3
 
 static int slave_byte_count;
 static uint8_t data[16];
+static uint8_t slave_number;
 /*
 void Rojo(void){
 	PTD->PCOR |= 1<<PTD15;
@@ -70,7 +74,16 @@ void LPI2C0_IRQs_init(void){
     IRQ_init(PDB0_IRQn,10);
 }
 
-void PORT_init_i2c(void){
+void LPI2C1_IRQs_init(void){
+    // LPI2C_Slave_IRQHandler
+    IRQ_init(LPI2C1_Slave_IRQn,1);// Priority level 1
+    // LPI2C_Master_IRQHandler
+    //IRQ_init(LPI2C0_Master_IRQn,1);                // Priority level 1
+    // PDB0_IRQHandler
+    IRQ_init(PDB0_IRQn,10);
+}
+
+void PORT_init_i2c0(void){
 	//I2C PTA2-SDA PTA3-SCL
 	PCC->PCCn[PCC_PORTA_INDEX ]|=PCC_PCCn_CGC_MASK; /* Enable clock for PORTB */
 
@@ -79,11 +92,21 @@ void PORT_init_i2c(void){
 
 	PORTA->PCR[I2C0_SDA]|=PORT_PCR_MUX(3) | PULL_UP ;           /* Port B6: MUX = ALT2,I2C_SDA */
 	PORTA->PCR[I2C0_SCL]|=PORT_PCR_MUX(3) | PULL_UP ;           /* Port B7: MUX = ALT2,I2C_SCL */
+}
 
+void PORT_init_i2c1(void){
+	//I2C PTE0-SDA PTE1-SCL
+	PCC->PCCn[PCC_PORTE_INDEX ]|=PCC_PCCn_CGC_MASK; /* Enable clock for PORTB */
+
+	PORTE->PCR[I2C1_SDA]&=  ~(PULL_UP);           /* Port B6: MUX = ALT2,I2C_SDA */
+	PORTE->PCR[I2C1_SCL]&=	~(PULL_UP);           /* Port B7: MUX = ALT2,I2C_SCL */
+
+	PORTE->PCR[I2C1_SDA]|=PORT_PCR_MUX(4) | PULL_UP ;           /* Port B6: MUX = ALT2,I2C_SDA */
+	PORTE->PCR[I2C1_SCL]|=PORT_PCR_MUX(4) | PULL_UP ;           /* Port B7: MUX = ALT2,I2C_SCL */
 }
 
 void Te_ordeno_que_te_inicies_esclavo0(int direction){//Este esclavo solo recibe datos por interrupcion
-
+	slave_number = 0;
 	PDB0_init();
 	PCC->PCCn[PCC_LPI2C0_INDEX] &= ~PCC_PCCn_CGC_MASK;    /* Ensure clk disabled for config */
 	PCC->PCCn[PCC_LPI2C0_INDEX] |= PCC_PCCn_PCS(0b001)    /* Clock Src= 1 (SOSCDIV2_CLK) */
@@ -103,12 +126,37 @@ void Te_ordeno_que_te_inicies_esclavo0(int direction){//Este esclavo solo recibe
 
 	//updated_data->address_written 	= 0;
 	//updated_data->slave_data 		= 0;
-	PORT_init_i2c();
+	PORT_init_i2c0();
 	slave_byte_count = 0;
 	LPI2C0_IRQs_init();
 }
 
+void Te_ordeno_que_te_inicies_esclavo1(int direction){//Este esclavo solo recibe datos por interrupcion
+	slave_number = 1;
+	PDB0_init();
+	PCC->PCCn[PCC_LPI2C1_INDEX] &= ~PCC_PCCn_CGC_MASK;    /* Ensure clk disabled for config */
+	PCC->PCCn[PCC_LPI2C1_INDEX] |= PCC_PCCn_PCS(0b001)    /* Clock Src= 1 (SOSCDIV2_CLK) */
+	                            |  PCC_PCCn_CGC_MASK;     /* Enable clock for LPUART1 regs */
+	//Esclavo no configura el clock SCL
+	LPI2C1->SIER /*|= LPI2C_SIER_AM0IE(1)*/	//Address Match 0 	Interrupt Enable c
+				   |=	LPI2C_SIER_AVIE(1)	//Address Valid 	Interrupt Enable c
+				   |	LPI2C_SIER_RSIE(1)	//Repeated Start 	Interrupt Enable
+				   |	LPI2C_SIER_SDIE(1)	//STOP Detect 		Interrupt Enable
+				   |	LPI2C_SIER_BEIE(1)	//Bit Error 		Interrupt Enable c
+				   |	LPI2C_SIER_FEIE(1)	//FIFO Error 		Interrupt Enable c
+				   |	LPI2C_SIER_RDIE(1);	//Receive Data 		Interrupt Enable c
+	LPI2C1->SCFGR1 |= 0x00000000;
+	LPI2C1->SCFGR2 |= 0x0000000F;
+	LPI2C1->SAMR   |= LPI2C_SAMR_ADDR0(direction);//Direccion I2C esclavo
+	LPI2C1->SCR    |= LPI2C_SCR_SEN_MASK;//Prender esclavo
 
+	//updated_data->address_written 	= 0;
+	//updated_data->slave_data 		= 0;
+	PORT_init_i2c1();
+
+	LPI2C1_IRQs_init();
+	slave_byte_count = 0;
+}
 
 void LPI2C0_init_master(void){
 	  PCC->PCCn[PCC_LPI2C0_INDEX] &= ~PCC_PCCn_CGC_MASK;    /* Ensure clk disabled for config */
@@ -437,33 +485,110 @@ void LPI2C0_Slave_IRQHandler(void){
 //	Rojo();
 }
 
+void LPI2C1_Slave_IRQHandler(void){
+	if(LPI2C1->SSR & LPI2C_SSR_AVF_MASK){/*address valid interrupt*/
+		//Verde();
+		uint32_t address = (LPI2C1->SASR);
+		if(address > 16000) GPIO_setPin(LED_RED);
+		//Verde();
+	}
+	if(LPI2C1->SSR & LPI2C_SSR_RDF_MASK){/*Read interrupt*/
+		//updated_data->slave_data = (uint8_t)(LPI2C0->SRDR & LPI2C_SRDR_DATA_MASK);
+		//if(updated_data->slave_data == 170) Blue();
+		//+2 because first byte is address and the second the number of bytes that will be written
+		if(slave_byte_count < SLAVE_FLOATS_RECEIVED*BYTESperFLOAT+2){//checar que no pase de 2
+			data[slave_byte_count] = (uint8_t)(LPI2C1->SRDR & LPI2C_SRDR_DATA_MASK);
+			if(data[slave_byte_count++] == 170) GPIO_setPin(LED_BLUE);
+			delayPDB(60000);
+
+		}
+		else{uint8_t clear = (uint8_t)(LPI2C1->SRDR & LPI2C_SRDR_DATA_MASK);}//leer el registro resetea el registro
+		GPIO_setPin(LED_GREEN);
+	}
+	if(LPI2C1->SSR & LPI2C_SSR_BEF_MASK){
+		LPI2C1->SSR |= LPI2C_SSR_BEF_MASK;//clear
+		GPIO_setPin(LED_RED);//BIT error flag
+		LPI2C1->SCR |= (1 << 9);
+	}
+	if(LPI2C1->SSR & LPI2C_SSR_FEF_MASK){
+		LPI2C1->SSR |= LPI2C_SSR_FEF_MASK;//clear flag
+		GPIO_setPin(LED_RED);//FIFO error flag
+		//Blue();
+		LPI2C1->SCR |= (1 << 9);
+	}
+	if(LPI2C1->SSR & LPI2C_SSR_AM0F_MASK){
+
+		GPIO_setPin(LED_GREEN);//address 0 match
+	}
+	if(LPI2C1->SSR & LPI2C_SSR_SDF_MASK){//Stop detected
+		LPI2C1->SSR |= LPI2C_SSR_SDF_MASK;//clear
+		//Verde();
+		//Rojo();
+		slave_byte_count = 0;
+	}
+	if(LPI2C1->SSR & LPI2C_SSR_RSF_MASK){//Repeated start
+		LPI2C1->SSR |= LPI2C_SSR_RSF_MASK;//clear
+		//Verde();
+		slave_byte_count = 0;
+	}
+//	Rojo();
+}
+
 uint8_t* get_data0(){
 	//uint32_t join = data[1];
 	//join |= data[0] << 8;
 	return data;
 }
 uint8_t float_signals_update(float* steer,float* brake,float* acc){
-	if(~(LPI2C0->SSR) & LPI2C_SSR_SBF_MASK){//si el esclavo está ocupado
-		float u_signals[3];
-		union{
-			float f;
-			unsigned long ul;
-			unsigned char byte;
-		}u;
-		int i;
-		//byte 0 is always zero
-		for(i=0;i<SLAVE_FLOATS_RECEIVED;i++){
-#if CHANGE_ENDIANNES
-			u.ul = (data[5+BYTESperFLOAT*i] << 24) | (data[4+BYTESperFLOAT*i] << 16) | (data[3+BYTESperFLOAT*i] << 8) | data[2+BYTESperFLOAT*i];
-#else
-			u.ul = (data[2+BYTESperFLOAT*i] << 24) | (data[3+BYTESperFLOAT*i] << 16) | (data[4+BYTESperFLOAT*i] << 8) | data[5+BYTESperFLOAT*i];
-#endif
-			u_signals[i] = u.f;
+	//el código está repetido ya que si algún puerto no está inicializado y se checa la variable
+	//me manda al Defualt ISR
+	if(!slave_number){
+		if(~(LPI2C0->SSR) & LPI2C_SSR_SBF_MASK){//si el esclavo está ocupado no puede leer
+			float u_signals[3];
+			union{
+				float f;
+				unsigned long ul;
+				unsigned char byte;
+			}u;
+			int i;
+			//byte 0 is always zero
+			for(i=0;i<SLAVE_FLOATS_RECEIVED;i++){
+	#if CHANGE_ENDIANNES
+				u.ul = (data[5+BYTESperFLOAT*i] << 24) | (data[4+BYTESperFLOAT*i] << 16) | (data[3+BYTESperFLOAT*i] << 8) | data[2+BYTESperFLOAT*i];
+	#else
+				u.ul = (data[2+BYTESperFLOAT*i] << 24) | (data[3+BYTESperFLOAT*i] << 16) | (data[4+BYTESperFLOAT*i] << 8) | data[5+BYTESperFLOAT*i];
+	#endif
+				u_signals[i] = u.f;
+			}
+			*steer = u_signals[0];
+			*brake = u_signals[1];
+			*acc   = u_signals[2];
+			return True;
 		}
-		*steer = u_signals[0];
-		*brake = u_signals[1];
-		*acc   = u_signals[2];
-		return True;
+	}
+	else {
+		if(~(LPI2C1->SSR) & LPI2C_SSR_SBF_MASK){//si el esclavo está ocupado
+			float u_signals[3];
+			union{
+				float f;
+				unsigned long ul;
+				unsigned char byte;
+			}u;
+			int i;
+			//byte 0 is always zero
+			for(i=0;i<SLAVE_FLOATS_RECEIVED;i++){
+	#if CHANGE_ENDIANNES
+				u.ul = (data[5+BYTESperFLOAT*i] << 24) | (data[4+BYTESperFLOAT*i] << 16) | (data[3+BYTESperFLOAT*i] << 8) | data[2+BYTESperFLOAT*i];
+	#else
+				u.ul = (data[2+BYTESperFLOAT*i] << 24) | (data[3+BYTESperFLOAT*i] << 16) | (data[4+BYTESperFLOAT*i] << 8) | data[5+BYTESperFLOAT*i];
+	#endif
+				u_signals[i] = u.f;
+			}
+			*steer = u_signals[0];
+			*brake = u_signals[1];
+			*acc   = u_signals[2];
+			return True;
+		}
 	}
 	return False;
 }
