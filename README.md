@@ -1,4 +1,4 @@
-# cartec-mcu
+# cartec-mcu2
 
 # Notes
 CMSIS: Cortex Microcontroller Software Interface Standard. Arm library used to perform the PID, taking abvantage of the mcu's Floating-point unit. https://developer.arm.com/embedded/cmsis
