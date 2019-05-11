@@ -1,4 +1,4 @@
-# cartec-mcu2
+# cartec-mcu
 
 # Notes
 CMSIS: Cortex Microcontroller Software Interface Standard. Arm library used to perform the PID, taking abvantage of the mcu's Floating-point unit. https://developer.arm.com/embedded/cmsis
@@ -8,6 +8,6 @@ HAL: High Abstration Layer
 MCAL: Microcontroller Abstraction Layer
 
 # Pinout Diagram
-<img width="687" alt="pinout" src="https://user-images.githubusercontent.com/37755017/42046937-94ed7160-7ac4-11e8-9570-62ca36255116.PNG">
+<img width="687" alt="pinout" src="https://user-images.githubusercontent.com/34130835/57563834-57e61400-7368-11e9-92d7-915f798486a1.png">
 
-[Pinout_Diagram.xlsx](https://github.com/FaridIz/cartec-mcu/files/2146084/Pinout_Diagram.xlsx)
+[Pinout_Diagram.xlsx](https://github.com/JuanAvelar/cartec-mcu2/files/3168520/Pinout_Diagram.xlsx)
