@@ -132,7 +132,7 @@ void brake_set_position_manual_ctrl(void){
 	err = set_point - braking_encoder_read_deg();
 
 	if( ((-PID_RESET_THRESHOLD_BRK < err) && (err < PID_RESET_THRESHOLD_BRK)) && ~brake_pid_reset_flag ){
-		arm_pid_reset_f32(&braking_pid);
+		//arm_pid_reset_f32(&braking_pid);
 		brake_pid_reset_flag = 0xFF;
 	}
 	else if( ((err < -PID_RESET_THRESHOLD_BRK) || (PID_RESET_THRESHOLD_BRK < err)) && brake_pid_reset_flag ){

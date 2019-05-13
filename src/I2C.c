@@ -59,6 +59,10 @@ void PDB0_IRQHandler(void){
 /*******************************************************************************
 Function Name : LPI2C0_IRQs_init
 *******************************************************************************/
+/**
+ //This function initializes the Nested vector interrupts with their respective priority
+ //
+  */
 void IRQ_init(int irq,int priority){
 	S32_NVIC->ICPR[irq/32] = (1 << (irq % 32));
 	S32_NVIC->ISER[irq/32] = (1 << (irq % 32));

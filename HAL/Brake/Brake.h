@@ -14,14 +14,14 @@
 #include "ADC.h"
 #include "arm_math.h"
 
-#define PID_RESET_THRESHOLD_BRK 2
+#define PID_RESET_THRESHOLD_BRK 100
 #define PID_SAMPLING_MS 10
 #define MAX_CW  -1300
 #define MAX_CCW 1300
 #define MOTOR_WHEELS_RELATION 1300/23
 
-#define MAX_CW2  -720
-#define MAX_CCW2 720
+#define MAX_CW2  -157//or -43% of revolution
+#define MAX_CCW2 157 //or 43% of revolution
 #define MOTOR_WHEELS_RELATION2 360/100
 
 

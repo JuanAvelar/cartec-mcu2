@@ -1,0 +1,25 @@
+var searchData=
+[
+  ['b',['b',['../union_a_p_s_r___type.html#a7dbc79a057ded4b11ca5323fc2d5ab14',1,'APSR_Type::b()'],['../union_i_p_s_r___type.html#add0d6497bd50c25569ea22b48a03ec50',1,'IPSR_Type::b()'],['../unionx_p_s_r___type.html#a3b1063bb5cdad67e037cba993b693b70',1,'xPSR_Type::b()'],['../union_c_o_n_t_r_o_l___type.html#adc6a38ab2980d0e9577b5a871da14eb9',1,'CONTROL_Type::b()']]],
+  ['backward_20compatibility_20for_20s32k148',['Backward Compatibility for S32K148',['../group___backward___compatibility___symbols___s32_k148.html',1,'']]],
+  ['base_5fofs',['BASE_OFS',['../struct_a_d_c___type.html#a2e387e6b13cafeb1e91fb4df00300191',1,'ADC_Type']]],
+  ['baud',['BAUD',['../struct_l_p_u_a_r_t___type.html#a11ab9cd2e4f863e837d8b210a00bb741',1,'LPUART_Type']]],
+  ['bfar',['BFAR',['../struct_s_c_b___type.html#a9201208535747956ec2c0964aaaadbf3',1,'SCB_Type::BFAR()'],['../struct_s32___s_c_b___type.html#ab13115494b7aaf10da15eea2c0722cff',1,'S32_SCB_Type::BFAR()']]],
+  ['bfgencr',['BFGENCR',['../struct_quad_s_p_i___type.html#af92f5c9f03f426e21b5c63a6bb574afb',1,'QuadSPI_Type']]],
+  ['bilinear_20interpolation',['Bilinear Interpolation',['../group___bilinear_interpolate.html',1,'']]],
+  ['bitreverseflag',['bitReverseFlag',['../structarm__cfft__radix2__instance__q15.html#af8300c1f60caa21e6b44b9240ab5af19',1,'arm_cfft_radix2_instance_q15::bitReverseFlag()'],['../structarm__cfft__radix4__instance__q15.html#a101e3f7b0bd6b5b14cd5214f23df4133',1,'arm_cfft_radix4_instance_q15::bitReverseFlag()'],['../structarm__cfft__radix2__instance__q31.html#a6239b8d268285334e88c008c07d68616',1,'arm_cfft_radix2_instance_q31::bitReverseFlag()'],['../structarm__cfft__radix4__instance__q31.html#a5a7c4f4c7b3fb655cbb2bc11ef160a2a',1,'arm_cfft_radix4_instance_q31::bitReverseFlag()'],['../structarm__cfft__radix2__instance__f32.html#af713b4ac5256a19bc965c89fe3005fa3',1,'arm_cfft_radix2_instance_f32::bitReverseFlag()'],['../structarm__cfft__radix4__instance__f32.html#ac10927a1620195a88649ce63dab66120',1,'arm_cfft_radix4_instance_f32::bitReverseFlag()']]],
+  ['bitreverseflagr',['bitReverseFlagR',['../structarm__rfft__instance__q15.html#a4c65cd40e0098ec2f5c0dc31488b9bc6',1,'arm_rfft_instance_q15::bitReverseFlagR()'],['../structarm__rfft__instance__q31.html#a3cb90cdc928a88b0203917dcb3dc1b71',1,'arm_rfft_instance_q31::bitReverseFlagR()'],['../structarm__rfft__instance__f32.html#ac342f3248157cbbd2f04a3c8ec9fc9eb',1,'arm_rfft_instance_f32::bitReverseFlagR()']]],
+  ['bitrevfactor',['bitRevFactor',['../structarm__cfft__radix2__instance__q15.html#a8722720c542cabd41df83fe88ef4f4cb',1,'arm_cfft_radix2_instance_q15::bitRevFactor()'],['../structarm__cfft__radix4__instance__q15.html#a6b010e5f02d1130c621e3d2e26b95df1',1,'arm_cfft_radix4_instance_q15::bitRevFactor()'],['../structarm__cfft__radix2__instance__q31.html#a9d17a87263953fe3559a007512c9f3a4',1,'arm_cfft_radix2_instance_q31::bitRevFactor()'],['../structarm__cfft__radix4__instance__q31.html#a94d2fead4efa4d5eaae142bbe30b0e15',1,'arm_cfft_radix4_instance_q31::bitRevFactor()'],['../structarm__cfft__radix2__instance__f32.html#ac1688dafa5177f6b1505abbfd0cf8b21',1,'arm_cfft_radix2_instance_f32::bitRevFactor()'],['../structarm__cfft__radix4__instance__f32.html#acc8cb18a8b901b8321ab9d86491e41a3',1,'arm_cfft_radix4_instance_f32::bitRevFactor()']]],
+  ['bitrevlength',['bitRevLength',['../structarm__cfft__instance__q15.html#a738907cf34bdbbaf724414ac2decbc3c',1,'arm_cfft_instance_q15::bitRevLength()'],['../structarm__cfft__instance__q31.html#a2250fa6b8fe73292c5418c50c0549f87',1,'arm_cfft_instance_q31::bitRevLength()'],['../structarm__cfft__instance__f32.html#a3ba329ed153d182746376208e773d648',1,'arm_cfft_instance_f32::bitRevLength()']]],
+  ['bkpt_5fasm',['BKPT_ASM',['../s32__core__cm4_8h.html#a320d09cd2c8a77995e5ce8d1433c162c',1,'s32_core_cm4.h']]],
+  ['buf0cr',['BUF0CR',['../struct_quad_s_p_i___type.html#ad287374434273903a9edfd205f777d4c',1,'QuadSPI_Type']]],
+  ['buf0ind',['BUF0IND',['../struct_quad_s_p_i___type.html#a5dcfbd71d5982feb0a6f81a0ee33b3dd',1,'QuadSPI_Type']]],
+  ['buf1cr',['BUF1CR',['../struct_quad_s_p_i___type.html#a0074a28acff5681df07c8e89076a2f6f',1,'QuadSPI_Type']]],
+  ['buf1ind',['BUF1IND',['../struct_quad_s_p_i___type.html#a3b50d27c3bbb52eca248cb7d8809e141',1,'QuadSPI_Type']]],
+  ['buf2cr',['BUF2CR',['../struct_quad_s_p_i___type.html#ab3b2307bbd9b9e9356a877a2472e0751',1,'QuadSPI_Type']]],
+  ['buf2ind',['BUF2IND',['../struct_quad_s_p_i___type.html#a4d1f05f99873d5c9a17d3bf7c70820c9',1,'QuadSPI_Type']]],
+  ['buf3cr',['BUF3CR',['../struct_quad_s_p_i___type.html#a664e22bed86ea01b26c6f19a511ea3d9',1,'QuadSPI_Type']]],
+  ['bus_5fclk',['BUS_CLK',['../_s32_k148__features_8h.html#a64124f27cd745ac7c837469f9391f728ac7898ed0cdcd93a0be61a146d5636d37',1,'S32K148_features.h']]],
+  ['busfault_5firqn',['BusFault_IRQn',['../group___interrupt__vector__numbers___s32_k148.html#gga7e1129cd8a196f4284d41db3e82ad5c8a8693500eff174f16119e96234fee73af',1,'S32K148.h']]],
+  ['basic_20math_20functions',['Basic Math Functions',['../group__group_math.html',1,'']]]
+];

@@ -14,10 +14,11 @@
 #include "arm_math.h"
 #include "utilities.h"
 
+
 extern PWM_channel M1_PWM;
 extern PWM_channel M2_PWM;
 
-#define PID_RESET_THRESHOLD 6
+#define PID_RESET_THRESHOLD 20 //6
 #define PID_SAMPLING_MS 10
 #define MAX_CW  -1300
 #define MAX_CCW 1300

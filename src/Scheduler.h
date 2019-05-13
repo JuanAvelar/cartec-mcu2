@@ -1,3 +1,9 @@
+/**************************************************************************//**
+ * @file     Scheduler.h
+ * @brief    Event scheduler RTOS aproximation of tasks library
+ * @author	 Farid
+ * @date     1. May 2018
+ ******************************************************************************/
 /*
  * Scheduler.h
  *
@@ -18,7 +24,7 @@ typedef struct {
 	uint32_t start_tick;
 }scheduler_task_config_t;
 
-
+/**Initializes scheduler tasks*/
 void scheduler_init(scheduler_task_config_t * scheduler_task_array, uint8_t number_of_tasks ,uint32_t step_ticks);	//Each tick is 25ns
 
 

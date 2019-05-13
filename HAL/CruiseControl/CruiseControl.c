@@ -169,7 +169,7 @@ void cruisecontrol_set_pot_manual_ctrl(float tps){
 	err = set_point - tps;
 //accounting on Actuator saturation
 	if( ((-PID_RESET_THRESHOLD_THROTTLE < err) && (err < PID_RESET_THRESHOLD_THROTTLE)) && ~throttle_pid_reset_flag ){
-		arm_pid_reset_f32(&throttle_pid);
+		//arm_pid_reset_f32(&throttle_pid);
 		throttle_pid_reset_flag = 0xFF;
 	}
 	else if( ((err < -PID_RESET_THRESHOLD_THROTTLE) || (PID_RESET_THRESHOLD_THROTTLE < err)) && throttle_pid_reset_flag ){

@@ -1,3 +1,9 @@
+/**************************************************************************//**
+ * @file     clocks_and_modes.h
+ * @brief    use external clock XTAL
+ *
+ *
+ ******************************************************************************/
 #ifndef CLOCKS_AND_MODES_H_
 #define CLOCKS_AND_MODES_H_
 

@@ -1,5 +1,11 @@
+/**************************************************************************//**
+ * @file     I2C.h
+ * @brief    Library to use slave I2C as read only by interrupts
+ * @author	 Juan Avelar
+ * @date     12. May 2019
+ ******************************************************************************/
 /*
- * I2C.h
+ *  I2C.h for slave read only
  *
  *  Created on: 19/02/2019
  *      Author: Juan Avelar
@@ -41,9 +47,11 @@ void	LPI2C0_Slave_IRQHandler	(void);
 void	LPI2C1_Slave_IRQHandler	(void);
 void 	LPI2C0_Master_IRQHandler(void);
 void Te_ordeno_que_te_inicies_esclavo0(int direction);
+/**initializes LPI2C1 as receive only with interrupt*/
 void Te_ordeno_que_te_inicies_esclavo1(int direction);
 //tener en cuenta el tamaño del arreglo de donde se sacar el puntero para no accesar memoria prohibida.
 uint8_t* get_data0	(void);
+/**Actualiza los valores de float de acuerdo a la memoria del buffer que recibe por interrupción*/
 uint8_t float_signals_update(float* steer,float* brake,float* acc);
 
 #endif /* I2C_H_ */

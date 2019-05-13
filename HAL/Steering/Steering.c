@@ -6,6 +6,7 @@
  */
 
 #include "Steering.h"
+#include "Sliding_mode.h"
 
 /* =================================================================================== */
 
@@ -46,7 +47,9 @@ FTM_PWM_config_t channel_2_PWM = {
 
 		.preescaler = PS_1,			/* (8MHz)/1 = 8MHz */
 		.channels	= 0b1000000,	/* Channel 6 */
-		.mod		= 400			/* 20KHz PWM period */
+//		.mod		= 400			/* 20KHz PWM period */
+		.mod		= 255			/* 31.372 KHz PWM period */
+
 };
 /*
 PWM_channel M1_PWM = {
@@ -64,6 +67,11 @@ arm_pid_instance_f32 steering_pid = {
 	.Ki = 0.0522, 	//0.0522,
 	.Kd = 0.00654 	//0.00654,
 
+};
+arm_STC_instance_f32 steering_STC = {
+		.C 	= 120,
+		.C1 = 2.8,
+		.B 	= 5.0,
 };
 
 #define pot_vs_pwmduty_relation  (2000/channel_2_PWM.mod)
@@ -84,6 +92,8 @@ void steering_init(void){
 	FTM_QD_mode_Init(steering_encoder, count_revolutions);
 	FTM_PWM_mode_Init(channel_2_PWM);
 	arm_pid_init_f32(&steering_pid, 1);
+#define timestep 0.01
+	init_STC_f32(&steering_STC, timestep);
 }
 
 float steering_encoder_read_rev(void){
@@ -129,25 +139,26 @@ void steering_set_position_pot_ctrl(void){
 	float err;
 	float out;
 	float set_point = (float)utility_potentiometer_position();
-	//steering set point goes from -1300 to 1300
-
-	set_point = set_point*1200/5000;
-
+	//----------------------------------
+	//steering set point goes from -23 to 23 and pot gives from 0 to 5000
+	//lets make a conversion
+	set_point = set_point*23/5000;
+	//----------------------------------
 	set_point = set_point * MOTOR_WHEELS_RELATION;
 
 	steer_limit(&set_point);
 
 	err = set_point - steering_encoder_read_deg();
-
+/*
 	if( ((-PID_RESET_THRESHOLD < err) && (err < PID_RESET_THRESHOLD)) && ~pid_reset_flag ){
-		arm_pid_reset_f32(&steering_pid);
+		//arm_pid_reset_f32(&steering_pid);
 		pid_reset_flag = 0xFF;
 	}
 	else if( ((err < -PID_RESET_THRESHOLD) || (PID_RESET_THRESHOLD < err)) && pid_reset_flag ){
 		pid_reset_flag = 0x00;
 	}
-
-	out = arm_pid_f32(&steering_pid, err);
+*/
+	out = arm_STC_f32(&steering_STC, err);
 
 	if(out < 0){
 		set_direction(CW);
@@ -156,8 +167,8 @@ void steering_set_position_pot_ctrl(void){
 	else{
 		set_direction(CCW);
 	}
-	if(out > 400)
-		out = 400;
+	if(out > 255)
+		out = 255;
 
 	PWM_set_duty(M2_PWM, out);
 }
@@ -171,7 +182,7 @@ void steering_set_position(float set_point){
 	steer_limit(&set_point);
 
 	err = set_point - steering_encoder_read_deg();
-
+/*
 	if( ((-PID_RESET_THRESHOLD < err) && (err < PID_RESET_THRESHOLD)) && ~pid_reset_flag ){
 		arm_pid_reset_f32(&steering_pid);
 		pid_reset_flag = 0xFF;
@@ -179,8 +190,8 @@ void steering_set_position(float set_point){
 	else if( ((err < -PID_RESET_THRESHOLD) || (PID_RESET_THRESHOLD < err)) && pid_reset_flag ){
 		pid_reset_flag = 0x00;
 	}
-
-	out = arm_pid_f32(&steering_pid, err);
+*/
+	out = arm_STC_f32(&steering_STC, err);
 
 	if(out < 0){
 		set_direction(CW);
@@ -189,8 +200,8 @@ void steering_set_position(float set_point){
 	else{
 		set_direction(CCW);
 	}
-	if(out > 400)
-		out = 400;
+	if(out > 255)
+		out = 255;
 
 	PWM_set_duty(M2_PWM, out);
 }
