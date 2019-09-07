@@ -8,6 +8,7 @@
 
 
 #include "Brake.h"
+#include "Sliding_mode.h"
 
 float check_setpoint;
 FTM_QuadDec_config_t braking_encoder = {
@@ -67,6 +68,12 @@ arm_pid_instance_f32 braking_pid = {
 
 };
 
+arm_STC_instance_f32 braking_STC = {
+		.C 	= 120,
+		.C1 = 2.8,
+		.B 	= 5.0,
+};
+
 typedef enum{
 	CW,
 	CCW,
@@ -87,6 +94,8 @@ void brake_init (void){
 	FTM_QD_mode_Init(braking_encoder, count_revolutions_brake);
 	FTM_PWM_mode_Init(channel_1_PWM);
 	arm_pid_init_f32(&braking_pid, 1);
+#define timestep1 0.01
+	init_STC_f32(&braking_STC, timestep1);
 }
 
 float braking_encoder_read_deg(void){
@@ -130,7 +139,7 @@ void brake_set_position_manual_ctrl(void){
 	brake_limit(&set_point);
 
 	err = set_point - braking_encoder_read_deg();
-
+/*
 	if( ((-PID_RESET_THRESHOLD_BRK < err) && (err < PID_RESET_THRESHOLD_BRK)) && ~brake_pid_reset_flag ){
 		//arm_pid_reset_f32(&braking_pid);
 		brake_pid_reset_flag = 0xFF;
@@ -138,8 +147,9 @@ void brake_set_position_manual_ctrl(void){
 	else if( ((err < -PID_RESET_THRESHOLD_BRK) || (PID_RESET_THRESHOLD_BRK < err)) && brake_pid_reset_flag ){
 		brake_pid_reset_flag = 0x00;
 	}
-
-	out = arm_pid_f32(&braking_pid, err);
+*/
+	//out = arm_pid_f32(&braking_pid, err);
+	out = arm_STC_f32(&braking_STC, err);
 
 	if(out < 0){
 		set_direction_brake(CW);
@@ -148,8 +158,8 @@ void brake_set_position_manual_ctrl(void){
 	else{
 		set_direction_brake(CCW);
 	}
-	if(out > 400)
-		out = 400;
+	if(out > 350)
+		out = 350;
 
 	PWM_set_duty(M1_PWM, out);
 }
@@ -158,12 +168,12 @@ void brake_set_position(float set_point){
 	float err;
 	float out;
 
-	set_point = set_point * MOTOR_WHEELS_RELATION2;
+	set_point = set_point * MOTOR_WHEELS_RELATION2;//changing percentage to degrees
 
 	brake_limit(&set_point);
 
 	err = set_point - braking_encoder_read_deg();
-
+/*
 	if( ((-PID_RESET_THRESHOLD_BRK < err) && (err < PID_RESET_THRESHOLD_BRK)) && ~brake_pid_reset_flag ){
 		arm_pid_reset_f32(&braking_pid);
 		brake_pid_reset_flag = 0xFF;
@@ -171,8 +181,9 @@ void brake_set_position(float set_point){
 	else if( ((err < -PID_RESET_THRESHOLD_BRK) || (PID_RESET_THRESHOLD_BRK < err)) && brake_pid_reset_flag ){
 		brake_pid_reset_flag = 0x00;
 	}
-
-	out = arm_pid_f32(&braking_pid, err);
+*/
+	//out = arm_pid_f32(&braking_pid, err);
+	out = arm_STC_f32(&braking_STC, err);
 
 	if(out < 0){
 		set_direction_brake(CW);
@@ -181,8 +192,8 @@ void brake_set_position(float set_point){
 	else{
 		set_direction_brake(CCW);
 	}
-	if(out > 400)
-		out = 400;
+	if(out > 340)
+		out = 340;
 
 	PWM_set_duty(M1_PWM, out);
 }
