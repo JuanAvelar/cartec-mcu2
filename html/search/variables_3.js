@@ -1,8 +1,8 @@
 var searchData=
 [
-  ['c',['C',['../union_a_p_s_r___type.html#a86e2c5b891ecef1ab55b1edac0da79a6',1,'APSR_Type::C()'],['../unionx_p_s_r___type.html#a40213a6b5620410cac83b0d89564609d',1,'xPSR_Type::C()']]],
+  ['c',['C',['../union_a_p_s_r___type.html#a86e2c5b891ecef1ab55b1edac0da79a6',1,'APSR_Type::C()'],['../unionx_p_s_r___type.html#a40213a6b5620410cac83b0d89564609d',1,'xPSR_Type::C()'],['../structarm___s_t_c__instance__f32.html#a6882067d308ea9dfd101b7b8089ab231',1,'arm_STC_instance_f32::C()']]],
   ['c0',['C0',['../struct_c_m_p___type.html#aaabf259250a9fa379581a0d19dc82efa',1,'CMP_Type']]],
-  ['c1',['C1',['../struct_c_m_p___type.html#aa50a4a287725dde94d37e0477a7ac741',1,'CMP_Type::C1()'],['../struct_p_d_b___type.html#a59a3b8fc39acbefe7e79262abc29cc34',1,'PDB_Type::C1()']]],
+  ['c1',['C1',['../structarm___s_t_c__instance__f32.html#af738201d815c0ea06e20b264eb7bac53',1,'arm_STC_instance_f32::C1()'],['../struct_c_m_p___type.html#aa50a4a287725dde94d37e0477a7ac741',1,'CMP_Type::C1()'],['../struct_p_d_b___type.html#a59a3b8fc39acbefe7e79262abc29cc34',1,'PDB_Type::C1()']]],
   ['c2',['C2',['../struct_c_m_p___type.html#af04b2bd21b27328183a53d91b54b1113',1,'CMP_Type']]],
   ['calib',['CALIB',['../struct_sys_tick___type.html#a561b8670b00aff35fb50794e90749ba4',1,'SysTick_Type::CALIB()'],['../struct_s32___sys_tick___type.html#a0ae28a15cc1d9ec600ffb35fb745f598',1,'S32_SysTick_Type::CALIB()']]],
   ['cbt',['CBT',['../struct_c_a_n___type.html#a8e167cc968770405e3fdabf2a8d459cd',1,'CAN_Type']]],

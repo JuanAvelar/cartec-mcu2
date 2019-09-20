@@ -7,6 +7,7 @@
 
 #include "CruiseControl.h"
 #include "arm_math.h"
+#include "Sliding_mode.h"
 #include "utilities.h"
 
 PORT_config_t ENA = { .port = ePortC, .pin = 29, .mux = eMux2,      .dir = eOutput };

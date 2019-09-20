@@ -290,6 +290,7 @@ var searchData=
   ['shpr2',['SHPR2',['../struct_s32___s_c_b___type.html#aa164ec6fecd3b6ad170ad7edf5a08bf9',1,'S32_SCB_Type']]],
   ['shpr3',['SHPR3',['../struct_s32___s_c_b___type.html#adbbbdedee8b7f5192c96f96ed0d40bc2',1,'S32_SCB_Type']]],
   ['sier',['SIER',['../struct_l_p_i2_c___type.html#af50575f71f8e721c82d4246ee127b9c4',1,'LPI2C_Type']]],
+  ['sigma',['sigma',['../structarm___s_t_c__instance__f32.html#abbceb8bb68006ae6be0851b71af3ac13',1,'arm_STC_instance_f32']]],
   ['sim',['SIM',['../group___s_i_m___peripheral___access___layer.html#ga3dd2f4c4bfb41778902b4b5350143d9e',1,'S32K148.h']]],
   ['sim_5fbase',['SIM_BASE',['../group___s_i_m___peripheral___access___layer.html#gace1d6947a3e5c9530f00f8c22adcd700',1,'S32K148.h']]],
   ['sim_5fbase_5faddrs',['SIM_BASE_ADDRS',['../group___s_i_m___peripheral___access___layer.html#gad0dfdd9f125421e6e0387da3fce02a5d',1,'S32K148.h']]],

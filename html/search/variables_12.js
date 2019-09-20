@@ -40,6 +40,7 @@ var searchData=
   ['shpr2',['SHPR2',['../struct_s32___s_c_b___type.html#aa164ec6fecd3b6ad170ad7edf5a08bf9',1,'S32_SCB_Type']]],
   ['shpr3',['SHPR3',['../struct_s32___s_c_b___type.html#adbbbdedee8b7f5192c96f96ed0d40bc2',1,'S32_SCB_Type']]],
   ['sier',['SIER',['../struct_l_p_i2_c___type.html#af50575f71f8e721c82d4246ee127b9c4',1,'LPI2C_Type']]],
+  ['sigma',['sigma',['../structarm___s_t_c__instance__f32.html#abbceb8bb68006ae6be0851b71af3ac13',1,'arm_STC_instance_f32']]],
   ['sint',['Sint',['../structarm__rfft__fast__instance__f32.html#a37419ababdfb3151b1891ae6bcd21012',1,'arm_rfft_fast_instance_f32']]],
   ['sirccfg',['SIRCCFG',['../struct_s_c_g___type.html#a09343866af0eb0acee6d989865de3545',1,'SCG_Type']]],
   ['sirccsr',['SIRCCSR',['../struct_s_c_g___type.html#a9b4e8874ad00c98e77301f1a3e5d14e6',1,'SCG_Type']]],

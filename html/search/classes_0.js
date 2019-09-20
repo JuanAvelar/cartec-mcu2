@@ -63,5 +63,6 @@ var searchData=
   ['arm_5frfft_5ffast_5finstance_5ff32',['arm_rfft_fast_instance_f32',['../structarm__rfft__fast__instance__f32.html',1,'']]],
   ['arm_5frfft_5finstance_5ff32',['arm_rfft_instance_f32',['../structarm__rfft__instance__f32.html',1,'']]],
   ['arm_5frfft_5finstance_5fq15',['arm_rfft_instance_q15',['../structarm__rfft__instance__q15.html',1,'']]],
-  ['arm_5frfft_5finstance_5fq31',['arm_rfft_instance_q31',['../structarm__rfft__instance__q31.html',1,'']]]
+  ['arm_5frfft_5finstance_5fq31',['arm_rfft_instance_q31',['../structarm__rfft__instance__q31.html',1,'']]],
+  ['arm_5fstc_5finstance_5ff32',['arm_STC_instance_f32',['../structarm___s_t_c__instance__f32.html',1,'']]]
 ];

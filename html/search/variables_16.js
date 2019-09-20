@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['w',['w',['../union_a_p_s_r___type.html#ae4c2ef8c9430d7b7bef5cbfbbaed3a94',1,'APSR_Type::w()'],['../union_i_p_s_r___type.html#a4adca999d3a0bc1ae682d73ea7cfa879',1,'IPSR_Type::w()'],['../unionx_p_s_r___type.html#a1a47176768f45f79076c4f5b1b534bc2',1,'xPSR_Type::w()'],['../union_c_o_n_t_r_o_l___type.html#a6b642cca3d96da660b1198c133ca2a1f',1,'CONTROL_Type::w()']]],
+  ['w',['W',['../structarm___s_t_c__instance__f32.html#a92cccbc67458e2071a3019d6298f9802',1,'arm_STC_instance_f32::W()'],['../union_a_p_s_r___type.html#ae4c2ef8c9430d7b7bef5cbfbbaed3a94',1,'APSR_Type::w()'],['../union_i_p_s_r___type.html#a4adca999d3a0bc1ae682d73ea7cfa879',1,'IPSR_Type::w()'],['../unionx_p_s_r___type.html#a1a47176768f45f79076c4f5b1b534bc2',1,'xPSR_Type::w()'],['../union_c_o_n_t_r_o_l___type.html#a6b642cca3d96da660b1198c133ca2a1f',1,'CONTROL_Type::w()']]],
   ['water',['WATER',['../struct_l_p_u_a_r_t___type.html#ac733588511b0c39117c7bffab6c8e75a',1,'LPUART_Type']]],
   ['win',['WIN',['../struct_w_d_o_g___type.html#a28ade96c93092f43dfd7e8ebfbc19eda',1,'WDOG_Type']]],
   ['wmbn_5fcs',['WMBn_CS',['../struct_c_a_n___type.html#afbac5eeb9ff28cabc7a9181023b103d4',1,'CAN_Type']]],

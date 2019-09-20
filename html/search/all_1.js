@@ -139,6 +139,7 @@ var searchData=
   ['arm_5fsqrt_5ff32',['arm_sqrt_f32',['../group___s_q_r_t.html#ga697d82c2747a3302cf44e7c9583da2e8',1,'arm_math.h']]],
   ['arm_5fsqrt_5fq15',['arm_sqrt_q15',['../group___s_q_r_t.html#ga5abe5ca724f3e15849662b03752c1238',1,'arm_math.h']]],
   ['arm_5fsqrt_5fq31',['arm_sqrt_q31',['../group___s_q_r_t.html#ga119e25831e141d734d7ef10636670058',1,'arm_math.h']]],
+  ['arm_5fstc_5finstance_5ff32',['arm_STC_instance_f32',['../structarm___s_t_c__instance__f32.html',1,'']]],
   ['asc1',['aSC1',['../struct_a_d_c___type.html#a103064af8a79afa9ebea88006f15612c',1,'ADC_Type']]],
   ['atcor',['ATCOR',['../struct_e_n_e_t___type.html#adf57cae4c04bf46ea11ad9d1418e2230',1,'ENET_Type']]],
   ['atcr',['ATCR',['../struct_e_n_e_t___type.html#abd74d50090161e7ae13fbc24d83909a1',1,'ENET_Type']]],

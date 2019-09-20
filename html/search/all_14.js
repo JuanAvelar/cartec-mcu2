@@ -1,5 +1,6 @@
 var searchData=
 [
+  ['u',['u',['../structarm___s_t_c__instance__f32.html#afebe90633e158bfd6c795babe2d4a0c1',1,'arm_STC_instance_f32']]],
   ['u16',['u16',['../struct_i_t_m___type.html#a1baed7c193839e41b3372cd7e67965e0',1,'ITM_Type']]],
   ['u32',['u32',['../struct_i_t_m___type.html#ac4222f53cebce8e0fbf568283a6b3863',1,'ITM_Type']]],
   ['u8',['u8',['../struct_i_t_m___type.html#ad04e4fa91fdaff768f3375c03deed5e0',1,'ITM_Type']]],

@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['b',['b',['../union_a_p_s_r___type.html#a7dbc79a057ded4b11ca5323fc2d5ab14',1,'APSR_Type::b()'],['../union_i_p_s_r___type.html#add0d6497bd50c25569ea22b48a03ec50',1,'IPSR_Type::b()'],['../unionx_p_s_r___type.html#a3b1063bb5cdad67e037cba993b693b70',1,'xPSR_Type::b()'],['../union_c_o_n_t_r_o_l___type.html#adc6a38ab2980d0e9577b5a871da14eb9',1,'CONTROL_Type::b()']]],
+  ['b',['b',['../union_a_p_s_r___type.html#a7dbc79a057ded4b11ca5323fc2d5ab14',1,'APSR_Type::b()'],['../union_i_p_s_r___type.html#add0d6497bd50c25569ea22b48a03ec50',1,'IPSR_Type::b()'],['../unionx_p_s_r___type.html#a3b1063bb5cdad67e037cba993b693b70',1,'xPSR_Type::b()'],['../union_c_o_n_t_r_o_l___type.html#adc6a38ab2980d0e9577b5a871da14eb9',1,'CONTROL_Type::b()'],['../structarm___s_t_c__instance__f32.html#a29a31c4b52e5807e8c1715fb77a889ad',1,'arm_STC_instance_f32::B()']]],
   ['backward_20compatibility_20for_20s32k148',['Backward Compatibility for S32K148',['../group___backward___compatibility___symbols___s32_k148.html',1,'']]],
   ['base_5fofs',['BASE_OFS',['../struct_a_d_c___type.html#a2e387e6b13cafeb1e91fb4df00300191',1,'ADC_Type']]],
   ['baud',['BAUD',['../struct_l_p_u_a_r_t___type.html#a11ab9cd2e4f863e837d8b210a00bb741',1,'LPUART_Type']]],
